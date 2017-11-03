@@ -7,7 +7,8 @@ using System;
 using System.IO;
 using System.Threading;
 
-namespace OAuthGmailDevice
+
+namespace Wddc.Email.Gmail
 {
     public class GmailHelper
     {
@@ -22,7 +23,7 @@ namespace OAuthGmailDevice
             this.scopes = new string[] { GmailService.Scope.MailGoogleCom };
         }
 
-        public void SendEmail(string fromId, string fromName, string toId, string toName, string subject, string body, string[] attachments)
+        public void SendEmail(string fromId, string subject, string body, string toIds, string[] attachments)
         {
             var userCredential = Authorize(fromId);
 
@@ -33,7 +34,7 @@ namespace OAuthGmailDevice
                 ApplicationName = this.appName,
             });
             // send message
-            MimeMessage message = GetMimeMessage(fromId, fromName, toId, toName, subject, body, attachments);
+            MimeMessage message = GetMimeMessage(fromId, fromId, toIds, subject, body, attachments);
             service.SendMessage(userCredential.UserId, message);
         }
 
@@ -62,12 +63,13 @@ namespace OAuthGmailDevice
             }
         }
 
-        private MimeMessage GetMimeMessage(string fromId, string fromName, string toId, string toName, string subject, string body, string[] attachments)
+        private MimeMessage GetMimeMessage(string fromId, string fromName, string toIds, string subject, string body, string[] attachments)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(fromName, fromId));
-            message.To.Add(new MailboxAddress(toName, toId));
+            message.To.Add(new MailboxAddress(toIds, toIds));
             message.Subject = subject;
+
             var textPartBody = new TextPart("plain")
             {
                 Text = body

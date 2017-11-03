@@ -4,7 +4,7 @@ using MimeKit;
 using System;
 using System.IO;
 
-namespace OAuthGmailDevice
+namespace Wddc.Email.Gmail
 {
     internal class GmailServiceExtensions : GmailService
     {
@@ -14,9 +14,17 @@ namespace OAuthGmailDevice
 
         public Message SendMessage(string userId, MimeMessage emailContent)
         {
-            Message message = CreateMessageWithEmail(emailContent);
-            message = this.Users.Messages.Send(message, userId).Execute();
-            return message;
+            try
+            {
+                Message message = CreateMessageWithEmail(emailContent);
+                message = this.Users.Messages.Send(message, userId).Execute();
+                return message;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(String.Format("Error sending message. From:'{0}' To:'{1}'. Subject:'{2}'. Body:'{3}'"
+                    , userId, emailContent.To, emailContent.Subject, emailContent.Body), ex);
+            }
         }
 
         public static Message CreateMessageWithEmail(MimeMessage emailContent)
